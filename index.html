@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Tortilla Werks</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 0.75rem;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        tr:hover {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-5xl font-bold text-center mb-8 text-green-700">Inventario Tortilla Werks</h1>
+
+        <!-- User ID Display -->
+        <div class="mb-6 p-4 bg-blue-100 border border-blue-200 text-blue-800 rounded-lg shadow-sm">
+            <p class="font-semibold">Usuario Actual:</p>
+            <p id="currentUserId" class="break-all text-sm">No seleccionado</p>
+        </div>
+
+        <!-- User Selection and Inventory Management -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="card bg-indigo-50">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-700">Selección de Usuario</h2>
+                <div class="mb-4">
+                    <label for="userSelect" class="block text-sm font-medium text-gray-700 mb-2">Selecciona un Usuario:</label>
+                    <select id="userSelect" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+                        <option value="">-- Selecciona --</option>
+                        <option value="David Pacheco">David Pacheco</option>
+                        <option value="Luis Enrique">Luis Enrique</option>
+                        <option value="Baudelina">Baudelina</option>
+                        <option value="Produccion 1">Produccion 1</option>
+                        <option value="Produccion 2">Produccion 2</option>
+                        <option value="Produccion 3">Produccion 3</option>
+                        <option value="William Chan">William Chan</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card bg-green-50">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-700">Gestión de Inventario</h2>
+                <div class="mb-4">
+                    <label for="itemSelect" class="block text-sm font-medium text-gray-700 mb-2">Selecciona un Item:</label>
+                    <select id="itemSelect" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+                        <option value="">-- Selecciona --</option>
+                        <option value="5&quot;">5"</option>
+                        <option value="6&quot;">6"</option>
+                        <option value="7&quot;">7"</option>
+                        <option value="8&quot;">8"</option>
+                        <option value="10&quot;">10"</option>
+                        <option value="12&quot;">12"</option>
+                        <option value="SB">SB</option>
+                        <option value="Cut Chip">Cut Chip</option>
+                        <option value="Whole Yellow">Whole Yellow</option>
+                        <option value="Whole White">Whole White</option>
+                        <option value="Enchilada">Enchilada</option>
+                        <option value="Mesa">Mesa</option>
+                        <option value="Blue Soft">Blue Soft</option>
+                        <option value="Tree Color">Tree Color</option>
+                        <option value="RWG">RWG</option>
+                        <option value="RWBG">RWBG</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="quantityInput" class="block text-sm font-medium text-gray-700 mb-2">Cantidad:</label>
+                    <input type="number" id="quantityInput" min="1" value="1" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+                </div>
+                <div class="flex space-x-4">
+                    <button id="entradaBtn" class="btn-primary flex-1">Entrada</button>
+                    <button id="salidaBtn" class="btn-secondary flex-1">Salida</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Inventory Display -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Inventario Actual</h2>
+            <div class="overflow-x-auto">
+                <table id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Inventory items will be rendered here -->
+                    </tbody>
+                </table>
+                <div id="loadingInventory" class="text-center py-4 text-gray-500">Cargando inventario...</div>
+            </div>
+        </div>
+
+        <!-- Daily Reports -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Reportes Diarios</h2>
+            <div class="mb-4">
+                <label for="reportDate" class="block text-sm font-medium text-gray-700 mb-2">Selecciona Fecha:</label>
+                <input type="date" id="reportDate" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2">
+            </div>
+            <button id="generateReportBtn" class="btn-primary w-full md:w-auto">Generar Reporte</button>
+
+            <div class="mt-6 overflow-x-auto">
+                <h3 class="text-xl font-semibold mb-3 text-gray-700">Registro de Transacciones</h3>
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Item</th>
+                            <th>Tipo</th>
+                            <th>Cantidad</th>
+                            <th>Fecha y Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Transactions will be rendered here -->
+                    </tbody>
+                </table>
+                <div id="loadingTransactions" class="text-center py-4 text-gray-500">Cargando transacciones...</div>
+                <div id="noTransactionsFound" class="text-center py-4 text-gray-500 hidden">No se encontraron transacciones para la fecha seleccionada.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeModalBtn">&times;</span>
+            <p id="modalMessage" class="text-lg font-medium text-gray-800 mb-4"></p>
+            <button id="modalOkBtn" class="btn-primary">OK</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables for Firebase instances and data
+        let app;
+        let db;
+        let auth;
+        let userId; // This will store the Firebase UID for internal use
+        let selectedUser = ''; // This will store the user's name selected from the dropdown
+        const initialItems = [
+            "5\"", "6\"", "7\"", "8\"", "10\"", "12\"", "SB", "Cut Chip", "Whole Yellow",
+            "Whole White", "Enchilada", "Mesa", "Blue Soft", "Tree Color", "RWG", "RWBG"
+        ];
+
+        // Get DOM elements
+        const userSelect = document.getElementById('userSelect');
+        const itemSelect = document.getElementById('itemSelect');
+        const quantityInput = document.getElementById('quantityInput');
+        const entradaBtn = document.getElementById('entradaBtn');
+        const salidaBtn = document.getElementById('salidaBtn');
+        const inventoryTableBody = document.querySelector('#inventoryTable tbody');
+        const transactionsTableBody = document.querySelector('#transactionsTable tbody');
+        const reportDateInput = document.getElementById('reportDate');
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalOkBtn = document.getElementById('modalOkBtn');
+        const currentUserIdDisplay = document.getElementById('currentUserId');
+        const loadingInventory = document.getElementById('loadingInventory');
+        const loadingTransactions = document.getElementById('loadingTransactions');
+        const noTransactionsFound = document.getElementById('noTransactionsFound');
+
+        /**
+         * Initializes Firebase and handles user authentication.
+         * Sets up real-time listeners for inventory and transactions after authentication.
+         */
+        async function initializeAppAndAuth() {
+            try {
+                // Retrieve Firebase configuration and app ID from global variables
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+                // Initialize Firebase app
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Authenticate user
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Listen for authentication state changes
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid; // Store Firebase UID internally
+                        currentUserIdDisplay.textContent = 'No seleccionado'; // Initial display for user name
+                        console.log("User authenticated (Firebase UID):", userId);
+
+                        // Ensure initial inventory items exist in Firestore
+                        await initializeInventoryItems();
+                        // Setup real-time listeners once authenticated and inventory is initialized
+                        setupRealtimeListeners();
+                    } else {
+                        console.log("No user is signed in.");
+                        currentUserIdDisplay.textContent = 'N/A';
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing Firebase or authenticating:", error);
+                modalMessage.textContent = `Error al iniciar la aplicación: ${error.message}`;
+                confirmationModal.style.display = 'flex'; // Show error modal
+            }
+        }
+
+        /**
+         * Initializes inventory items in Firestore if they don't already exist.
+         * Sets initial quantity to 0 for all predefined items.
+         */
+        async function initializeInventoryItems() {
+            const itemsCollectionRef = collection(db, `artifacts/${__app_id}/public/data/items`);
+            for (const item of initialItems) {
+                const itemDocRef = doc(itemsCollectionRef, item.replace(/[^a-zA-Z0-9]/g, '_')); // Sanitize item name for doc ID
+                const itemDocSnap = await getDoc(itemDocRef);
+                if (!itemDocSnap.exists()) {
+                    await setDoc(itemDocRef, { name: item, quantity: 0 });
+                    console.log(`Initialized item: ${item}`);
+                }
+            }
+        }
+
+        /**
+         * Sets up real-time listeners for inventory items and transactions.
+         */
+        function setupRealtimeListeners() {
+            if (!db || !userId) {
+                console.warn("Firestore or userId not available for setting up listeners.");
+                return;
+            }
+
+            // Real-time listener for inventory items
+            const itemsCollectionRef = collection(db, `artifacts/${__app_id}/public/data/items`);
+            onSnapshot(itemsCollectionRef, (snapshot) => {
+                const fetchedItemsMap = new Map();
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    fetchedItemsMap.set(data.name, data.quantity);
+                });
+
+                // Create an array of items in the desired order, with quantities
+                const orderedItems = initialItems.map(itemName => ({
+                    name: itemName,
+                    quantity: fetchedItemsMap.get(itemName) || 0 // Default to 0 if not found
+                }));
+
+                renderInventory(orderedItems);
+                loadingInventory.classList.add('hidden'); // Hide loading message
+            }, (error) => {
+                console.error("Error fetching inventory in real-time:", error);
+                modalMessage.textContent = `Error al cargar inventario: ${error.message}`;
+                confirmationModal.style.display = 'flex';
+            });
+
+            // Real-time listener for transactions (for the main log, not daily reports)
+            const transactionsCollectionRef = collection(db, `artifacts/${__app_id}/public/data/transactions`);
+            onSnapshot(transactionsCollectionRef, (snapshot) => {
+                const transactions = [];
+                snapshot.forEach(doc => {
+                    transactions.push(doc.data());
+                });
+                // Sort transactions by timestamp in descending order
+                transactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                renderTransactions(transactions);
+                loadingTransactions.classList.add('hidden'); // Hide loading message
+            }, (error) => {
+                console.error("Error fetching transactions in real-time:", error);
+                modalMessage.textContent = `Error al cargar transacciones: ${error.message}`;
+                confirmationModal.style.display = 'flex';
+            });
+        }
+
+        /**
+         * Renders the current inventory in the HTML table.
+         * @param {Array<Object>} items - Array of inventory item objects.
+         */
+        function renderInventory(items) {
+            inventoryTableBody.innerHTML = ''; // Clear existing rows
+            if (items.length === 0) {
+                inventoryTableBody.innerHTML = `<tr><td colspan="2" class="text-center text-gray-500">No hay items en el inventario.</td></tr>`;
+                return;
+            }
+            items.forEach(item => {
+                const row = inventoryTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                `;
+            });
+        }
+
+        /**
+         * Renders transactions in the HTML table.
+         * @param {Array<Object>} transactions - Array of transaction objects.
+         */
+        function renderTransactions(transactions) {
+            transactionsTableBody.innerHTML = ''; // Clear existing rows
+            if (transactions.length === 0) {
+                transactionsTableBody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500">No hay transacciones registradas.</td></tr>`;
+                return;
+            }
+            transactions.forEach(transaction => {
+                const row = transactionsTableBody.insertRow();
+                const date = new Date(transaction.timestamp);
+                row.innerHTML = `
+                    <td>${transaction.user}</td>
+                    <td>${transaction.item}</td>
+                    <td>${transaction.type}</td>
+                    <td>${transaction.quantity}</td>
+                    <td>${date.toLocaleString()}</td>
+                `;
+            });
+        }
+
+        /**
+         * Updates the inventory quantity and logs the transaction.
+         * @param {string} type - "Entrada" or "Salida".
+         */
+        async function updateInventory(type) {
+            if (!selectedUser) {
+                showConfirmationModal('Por favor, selecciona un usuario.');
+                return;
+            }
+            const itemName = itemSelect.value;
+            if (!itemName) {
+                showConfirmationModal('Por favor, selecciona un item.');
+                return;
+            }
+            const quantity = parseInt(quantityInput.value);
+            if (isNaN(quantity) || quantity <= 0) {
+                showConfirmationModal('Por favor, ingresa una cantidad válida (mayor que 0).');
+                return;
+            }
+
+            try {
+                // Sanitize item name for doc ID, replacing non-alphanumeric characters with underscores
+                const sanitizedItemName = itemName.replace(/[^a-zA-Z0-9]/g, '_');
+                const itemDocRef = doc(db, `artifacts/${__app_id}/public/data/items`, sanitizedItemName);
+                const itemDocSnap = await getDoc(itemDocRef);
+
+                let currentQuantity = 0;
+                if (itemDocSnap.exists()) {
+                    currentQuantity = itemDocSnap.data().quantity;
+                } else {
+                    // If item doesn't exist, initialize it with 0
+                    await setDoc(itemDocRef, { name: itemName, quantity: 0 });
+                }
+
+                let newQuantity;
+                if (type === 'Entrada') {
+                    newQuantity = currentQuantity + quantity;
+                } else { // Salida
+                    if (currentQuantity < quantity) {
+                        showConfirmationModal(`No hay suficiente ${itemName} en inventario. Cantidad actual: ${currentQuantity}`);
+                        return;
+                    }
+                    newQuantity = currentQuantity - quantity;
+                }
+
+                // Update inventory item
+                await updateDoc(itemDocRef, { quantity: newQuantity });
+
+                // Add transaction log
+                const transactionsCollectionRef = collection(db, `artifacts/${__app_id}/public/data/transactions`);
+                await addDoc(transactionsCollectionRef, {
+                    user: selectedUser, // Use the selected user's name
+                    item: itemName,
+                    type: type,
+                    quantity: quantity,
+                    timestamp: new Date().toISOString()
+                });
+
+                showConfirmationModal(`Registro de ${type} exitoso para ${itemName}: ${quantity} unidades. Nuevo total: ${newQuantity}`);
+                quantityInput.value = 1; // Reset quantity input
+            } catch (error) {
+                console.error("Error updating inventory:", error);
+                showConfirmationModal(`Error al registrar la operación: ${error.message}`);
+            }
+        }
+
+        /**
+         * Displays the confirmation modal with a given message.
+         * @param {string} message - The message to display in the modal.
+         */
+        function showConfirmationModal(message) {
+            modalMessage.textContent = message;
+            confirmationModal.style.display = 'flex';
+        }
+
+        /**
+         * Generates and displays a daily report based on the selected date.
+         */
+        async function generateDailyReport() {
+            const selectedDate = reportDateInput.value;
+            if (!selectedDate) {
+                showConfirmationModal('Por favor, selecciona una fecha para el reporte.');
+                return;
+            }
+
+            // Define start and end of the selected day
+            const startOfDay = new Date(selectedDate);
+            startOfDay.setHours(0, 0, 0, 0); // Set to start of the day
+            const endOfDay = new Date(selectedDate);
+            endOfDay.setHours(23, 59, 59, 999); // Set to end of the day
+
+            try {
+                const transactionsCollectionRef = collection(db, `artifacts/${__app_id}/public/data/transactions`);
+                // Note: Firestore queries for range on timestamp require a single field.
+                // We'll fetch all and filter client-side to avoid index issues with `where` and `orderBy`.
+                const querySnapshot = await getDocs(transactionsCollectionRef);
+
+                const dailyTransactions = [];
+                querySnapshot.forEach(doc => {
+                    const transaction = doc.data();
+                    const transactionDate = new Date(transaction.timestamp);
+                    if (transactionDate >= startOfDay && transactionDate <= endOfDay) {
+                        dailyTransactions.push(transaction);
+                    }
+                });
+
+                // Sort transactions by timestamp in descending order
+                dailyTransactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                // Render the filtered transactions in the report table
+                transactionsTableBody.innerHTML = ''; // Clear previous report
+                if (dailyTransactions.length === 0) {
+                    noTransactionsFound.classList.remove('hidden');
+                    loadingTransactions.classList.add('hidden');
+                } else {
+                    noTransactionsFound.classList.add('hidden');
+                    renderTransactions(dailyTransactions);
+                    loadingTransactions.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error("Error generating daily report:", error);
+                showConfirmationModal(`Error al generar el reporte: ${error.message}`);
+            }
+        }
+
+        // Event Listeners
+        userSelect.addEventListener('change', (e) => {
+            selectedUser = e.target.value;
+            currentUserIdDisplay.textContent = selectedUser || 'No seleccionado'; // Update display
+        });
+
+        entradaBtn.addEventListener('click', () => updateInventory('Entrada'));
+        salidaBtn.addEventListener('click', () => updateInventory('Salida'));
+        generateReportBtn.addEventListener('click', generateDailyReport);
+
+        closeModalBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+
+        modalOkBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+
+        // Close modal if user clicks outside of it
+        window.addEventListener('click', (event) => {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = 'none';
+            }
+        });
+
+        // Set default date for report to today
+        reportDateInput.valueAsDate = new Date();
+
+        // Initialize the app when the window loads
+        window.onload = initializeAppAndAuth;
+    </script>
+</body>
+</html>
